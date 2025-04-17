@@ -3,14 +3,11 @@ package com.chess.parser;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class PGNParser {
 
-    public static class ParsedGame{
+    public static class ParsedGame {
         public Map<String, String> tags = new HashMap<>();
         public List<String> moves = new ArrayList<>();
         public List<String> syntaxErrors = new ArrayList<>();
@@ -19,12 +16,20 @@ public class PGNParser {
     public List<ParsedGame> parseFile(String filePath) {
         List<ParsedGame> games = new ArrayList<>();
 
-        try(BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
             ParsedGame currentGame = new ParsedGame();
-            while ((line = reader.readLine()) != null) {
 
-                if (line.startsWith("[") && line.endsWith("]")) {
+            while ((line = reader.readLine()) != null) {
+                line = line.trim();
+                if (line.isEmpty()) continue;
+
+                if (line.startsWith("[")) {
+                    if (!line.endsWith("]")) {
+                        currentGame.syntaxErrors.add("Malformed tag line (missing ']'): " + line);
+                        continue;
+                    }
+
                     // Handle start of a new game if we hit a new [Event ...] tag
                     if (line.startsWith("[Event ") && (!currentGame.tags.isEmpty() || !currentGame.moves.isEmpty())) {
                         games.add(currentGame);
@@ -34,36 +39,34 @@ public class PGNParser {
                     String content = line.substring(1, line.length() - 1);
                     int spaceIndex = content.indexOf(" ");
                     if (spaceIndex == -1) {
-                        currentGame.syntaxErrors.add("Malformed tag line: " + line);
+                        currentGame.syntaxErrors.add("Malformed tag line (missing space): " + line);
+                        continue;
                     }
-                    else {
-                        String tag = content.substring(0, spaceIndex).trim();
-                        String value = content.substring(spaceIndex + 1).trim();
 
-                        if (value.startsWith("\"") && value.endsWith("\"")) {
-                            value = value. substring(1, value.length() -1);
-                            currentGame.tags.put(tag, value);
-                        } else {
-                            currentGame.syntaxErrors.add("Missing quotes in tag value: " + line);
-                        }
+                    String tag = content.substring(0, spaceIndex).trim();
+                    String value = content.substring(spaceIndex + 1).trim();
+
+                    if (value.startsWith("\"") && value.endsWith("\"") && value.length() >= 2) {
+                        value = value.substring(1, value.length() - 1);
+                        currentGame.tags.put(tag, value);
+                    } else {
+                        currentGame.syntaxErrors.add("Missing quotes in tag value: " + line);
                     }
 
                 } else {
                     String[] tokens = line.split("\\s+");
                     for (String token : tokens) {
                         if (token.matches("^[0-9]+\\.$")) {
-                            continue;
-                        } else if (token.matches("^[a-hNBRQKO0-9x+#=]+$") || token.matches("^O-O(-O)?$")) {
+                            continue; // move number (e.g. "1.")
+                        } else if (token.matches("^(O-O(-O)?|[a-h]?[NBRQK]?[a-h]?[1-8](=[NBRQ])?[+#]?)$")) {
                             currentGame.moves.add(token);
                         } else {
                             currentGame.syntaxErrors.add("Invalid move token: " + token);
                         }
-
                     }
-
                 }
-
             }
+
             if (!currentGame.tags.isEmpty() || !currentGame.moves.isEmpty()) {
                 games.add(currentGame);
             }

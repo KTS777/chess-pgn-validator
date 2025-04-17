@@ -7,6 +7,15 @@ public class Board {
         setupInitialPosition();
     }
 
+    public Board(boolean empty) {
+        if (!empty) {
+            setupInitialPosition();
+        } else {
+            board = new Piece[8][8]; // initialize empty board
+        }
+    }
+
+
     public void setupInitialPosition() {
 
         for (int col = 0; col < 8; col++) {
