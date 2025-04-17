@@ -11,7 +11,6 @@ public class Knight extends Piece {
         int rowDiff = Math.abs(toRow - fromRow);
         int colDiff = Math.abs(toCol - fromCol);
 
-        // Knight moves in an L shape: 2+1 or 1+2
         if ((rowDiff == 2 && colDiff == 1) || (rowDiff == 1 && colDiff == 2)) {
             Piece target = board[toRow][toCol];
             return target == null || target.isWhite() != this.isWhite;

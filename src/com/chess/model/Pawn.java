@@ -8,45 +8,42 @@ public class Pawn extends Piece {
 
     @Override
     public boolean isValidMove(int fromRow, int fromCol, int toRow, int toCol, Piece[][] board) {
+        return isValidMove(fromRow, fromCol, toRow, toCol, board, null);
+    }
+
+
+    public boolean isValidMove(int fromRow, int fromCol, int toRow, int toCol, Piece[][] board, int[] lastDoubleStepPawn) {
         int direction = isWhite ? -1 : 1;
         int startRow = isWhite ? 6 : 1;
 
-        // Promotion handling
-        if (isWhite && toRow == 0 && fromCol == toCol && board[toRow][toCol] == null) {
-            return fromRow == 6; // single step from 2nd to 1st rank (e7 → e8)
-        }
-        if (!isWhite && toRow == 7 && fromCol == toCol && board[toRow][toCol] == null) {
-            return fromRow == 1; // single step from 7th to 8th rank (e2 → e1)
-        }
+        Piece target = board[toRow][toCol];
 
-
-        // Promotion with capture
-        if (isWhite && toRow == 0 && Math.abs(fromCol - toCol) == 1 && board[toRow][toCol] != null) {
-            return fromRow == 6; // diagonal promotion capture
-        }
-        if (!isWhite && toRow == 7 && Math.abs(fromCol - toCol) == 1 && board[toRow][toCol] != null) {
-            return fromRow == 1;
-        }
-
-
-        // Basic forward move
-        if (fromCol == toCol) {
-            // Move one forward
-            if (toRow == fromRow + direction && board[toRow][toCol] == null) {
-                return true;
-            }
-            // Move two forward from starting position
-            if (fromRow == startRow && toRow == fromRow + 2 * direction &&
-                    board[fromRow + direction][toCol] == null &&
-                    board[toRow][toCol] == null) {
-                return true;
-            }
-        }
-
-        // Capture diagonally
+        // Diagonal capture (normal or en passant)
         if (Math.abs(fromCol - toCol) == 1 && toRow == fromRow + direction) {
-            Piece target = board[toRow][toCol];
             if (target != null && target.isWhite() != this.isWhite) {
+                return true;
+            }
+
+            // En passant logic
+            if (target == null && lastDoubleStepPawn != null &&
+                    lastDoubleStepPawn[0] == fromRow && lastDoubleStepPawn[1] == toCol) {
+                Piece adjacent = board[fromRow][toCol];
+                if (adjacent instanceof Pawn && adjacent.isWhite() != this.isWhite) {
+                    return true;
+                }
+            }
+        }
+
+        // Forward single
+        if (fromCol == toCol && toRow == fromRow + direction) {
+            if (target == null) {
+                return true;
+            }
+        }
+
+        // Forward double from starting position
+        if (fromCol == toCol && fromRow == startRow && toRow == fromRow + 2 * direction) {
+            if (board[fromRow + direction][toCol] == null && target == null) {
                 return true;
             }
         }

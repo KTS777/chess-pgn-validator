@@ -11,9 +11,7 @@ public abstract class Piece {
         return isWhite;
     }
 
-    // Abstract method: each subclass (Pawn, Rook...) must implement this
     public abstract boolean isValidMove(int fromRow, int fromCol, int toRow, int toCol, Piece[][] board);
 
-    // For printing to console
     public abstract String getSymbol();
 }

@@ -11,14 +11,13 @@ public class Queen extends Piece {
         int rowDiff = Math.abs(toRow - fromRow);
         int colDiff = Math.abs(toCol - fromCol);
 
+        int rowStep = Integer.compare(toRow, fromRow);
+        int colStep = Integer.compare(toCol, fromCol);
+
         // Diagonal move
         if (rowDiff == colDiff) {
-            int rowStep = (toRow > fromRow) ? 1 : -1;
-            int colStep = (toCol > fromCol) ? 1 : -1;
-
             int r = fromRow + rowStep;
             int c = fromCol + colStep;
-
             while (r != toRow && c != toCol) {
                 if (board[r][c] != null) {
                     return false;
@@ -26,28 +25,24 @@ public class Queen extends Piece {
                 r += rowStep;
                 c += colStep;
             }
+        }
 
-            // Horizontal or vertical move
-        } else if (fromRow == toRow || fromCol == toCol) {
-            int rowStep = Integer.compare(toRow, fromRow);
-            int colStep = Integer.compare(toCol, fromCol);
-
+        // Straight move
+        else if (fromRow == toRow || fromCol == toCol) {
             int r = fromRow + rowStep;
             int c = fromCol + colStep;
-
             while (r != toRow || c != toCol) {
                 if (board[r][c] != null) {
                     return false;
                 }
-                r += rowStep;
-                c += colStep;
+                r += (fromRow == toRow) ? 0 : rowStep;
+                c += (fromCol == toCol) ? 0 : colStep;
             }
-
         } else {
-            return false; // Not a straight or diagonal move
+            return false; // Not a valid queen move
         }
 
-        // Final square must be empty or have enemy piece
+        // Final square must be empty or enemy
         Piece target = board[toRow][toCol];
         return target == null || target.isWhite() != this.isWhite;
     }

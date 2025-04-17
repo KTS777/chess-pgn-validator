@@ -1,6 +1,6 @@
 package com.chess;
 
-import com.chess.logic.GameReplay;
+import com.chess.controller.GameController;
 import com.chess.parser.PGNParser;
 
 import java.util.List;
@@ -12,7 +12,7 @@ public class Main {
 
         for (int i = 0; i < games.size(); i++) {
             System.out.println("Replaying Game " + (i + 1) + "...");
-            boolean result = GameReplay.replayGame(games.get(i));
+            boolean result = GameController.replayGame(games.get(i));
             System.out.println(result ? "Game is VALID ✅" : "Game is INVALID ❌");
             System.out.println("---------------------------");
         }

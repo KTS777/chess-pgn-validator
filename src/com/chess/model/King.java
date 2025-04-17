@@ -11,7 +11,7 @@ public class King extends Piece {
         int rowDiff = Math.abs(toRow - fromRow);
         int colDiff = Math.abs(toCol - fromCol);
 
-        // King moves only 1 square in any direction
+
         if (rowDiff <= 1 && colDiff <= 1 && (rowDiff + colDiff > 0)) {
             Piece target = board[toRow][toCol];
             return target == null || target.isWhite() != this.isWhite;
