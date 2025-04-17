@@ -1,0 +1,8 @@
+[Event "Ambiguity Test"]
+[Site "Test"]
+[Date "2024.04.13"]
+[White "Alpha"]
+[Black "Beta"]
+[Result "1-0"]
+
+1. Nf3 Nf6 2. Nc3 Nc6 3. Nf3e5

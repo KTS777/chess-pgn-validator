@@ -53,8 +53,8 @@ public class PGNParser {
                     for (String token : tokens) {
                         if (token.matches("^[0-9]+\\.$")) {
                             continue;
-                        } else if (token.matches("^[a-hNBRQKO0-9x+#=]+$")) {
-                           currentGame.moves.add(token);
+                        } else if (token.matches("^[a-hNBRQKO0-9x+#=]+$") || token.matches("^O-O(-O)?$")) {
+                            currentGame.moves.add(token);
                         } else {
                             currentGame.syntaxErrors.add("Invalid move token: " + token);
                         }

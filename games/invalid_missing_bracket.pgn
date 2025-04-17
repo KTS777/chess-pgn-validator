@@ -1,0 +1,8 @@
+[Event "Illegal Move"]
+[Site "Test"]
+[Date "2024.04.13"]
+[White "Alpha"]
+[Black "Beta"]
+[Result "0-1"]
+
+1. e4 e5 2. Ke2 Ke7 3. Qh5 Nc6 4. Rh7

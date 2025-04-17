@@ -1,7 +1,6 @@
 package com.chess.logic;
 
-import com.chess.model.Board;
-import com.chess.model.Piece;
+import com.chess.model.*;
 import com.chess.parser.PGNParser;
 
 public class GameReplay {
@@ -37,22 +36,83 @@ public class GameReplay {
     }
 
     private static boolean applyMove(Board board, String move, boolean isWhiteTurn) {
-        move = move.replace("+", "").replace("#", "");
+        move = move.replace("+", "").replace("#", "").replace("x", "");
 
+        String promotion = null;
+        if (move.contains("=")) {
+            int idx = move.indexOf('=');
+            promotion = move.substring(idx + 1); // e.g. Q
+            move = move.substring(0, idx);       // trim to "e8" or "dxe8"
+        }
+
+        // ✅ Handle castling first
+        if (move.equals("O-O")) {
+            if (isWhiteTurn) {
+                // White kingside
+                board.movePiece(7, 4, 7, 6); // King e1 → g1
+                board.movePiece(7, 7, 7, 5); // Rook h1 → f1
+            } else {
+                // Black kingside
+                board.movePiece(0, 4, 0, 6); // King e8 → g8
+                board.movePiece(0, 7, 0, 5); // Rook h8 → f8
+            }
+            System.out.println("Castling: " + move);
+            board.printBoard(); // Optional
+            return true;
+        }
+
+        if (move.equals("O-O-O")) {
+            if (isWhiteTurn) {
+                // White queenside
+                board.movePiece(7, 4, 7, 2); // King e1 → c1
+                board.movePiece(7, 0, 7, 3); // Rook a1 → d1
+            } else {
+                // Black queenside
+                board.movePiece(0, 4, 0, 2); // King e8 → c8
+                board.movePiece(0, 0, 0, 3); // Rook a8 → d8
+            }
+            System.out.println("Castling: " + move);
+            board.printBoard(); // Optional
+            return true;
+        }
+
+        // ✅ Continue with normal move parsing
         String pieceCode;
         String targetSquare;
 
-        // Detect type of move
-        if (move.length() == 2) {
-            pieceCode = "P"; // pawn
+        String disambiguation = null;
+
+        if (move.matches("^[a-h][1-8]$")) {
+            pieceCode = "P";
             targetSquare = move;
-        } else if (move.length() >= 3 && Character.isUpperCase(move.charAt(0))) {
+
+        } else if (move.matches("^[a-h][a-h][1-8]$")) {
+            pieceCode = "P";
+            disambiguation = move.substring(0, 1);
+            targetSquare = move.substring(1);
+
+        } else if (move.length() == 3 && Character.isUpperCase(move.charAt(0))) {
             pieceCode = move.substring(0, 1);
-            targetSquare = move.substring(move.length() - 2);
+            targetSquare = move.substring(1);
+
+        } else if (move.matches("^[NBRQK][a-h][a-h][1-8]$")) {
+            pieceCode = move.substring(0, 1);
+            disambiguation = move.substring(1, 2); // e.g. g
+            targetSquare = move.substring(2);
+
+        } else if (move.matches("^[NBRQK][1-8][a-h][1-8]$")) {
+            pieceCode = move.substring(0, 1);
+            disambiguation = move.substring(1, 2); // e.g. 1
+            targetSquare = move.substring(2);
+
+        } else if (move.matches("^[NBRQK][a-h][1-8]$")) {
+            pieceCode = move.substring(0, 1);
+            targetSquare = move.substring(1);
         } else {
             System.out.println("Unsupported move format: " + move);
             return false;
         }
+
 
         int[] target = squareToCoords(targetSquare);
         if (target == null) return false;
@@ -62,7 +122,8 @@ public class GameReplay {
 
         Piece[][] boardState = board.getBoard();
 
-        // Find the matching piece that can move there
+
+        // Find matching piece that can legally make this move
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
                 Piece p = boardState[row][col];
@@ -81,10 +142,50 @@ public class GameReplay {
 
                 if (!matchType) continue;
 
-                if (p.isValidMove(row, col, toRow, toCol, boardState)) {
-                    board.movePiece(row, col, toRow, toCol);
-                    return true;
+                if (disambiguation != null && !disambiguation.isEmpty()) {
+                    if (Character.isLetter(disambiguation.charAt(0))) {
+                        int disambigCol = disambiguation.charAt(0) - 'a';
+                        if (col != disambigCol) continue;
+                    } else if (Character.isDigit(disambiguation.charAt(0))) {
+                        int disambigRow = 8 - Character.getNumericValue(disambiguation.charAt(0));
+                        if (row != disambigRow) continue;
+                    }
                 }
+
+                if (p.isValidMove(row, col, toRow, toCol, boardState)) {
+                    // Check for promotion case (only applies to pawns)
+                    if (p.getSymbol().equalsIgnoreCase("P") && promotion != null) {
+                        Piece promoted;
+                        boolean isWhite = p.isWhite();
+
+                        switch (promotion.toUpperCase()) {
+                            case "Q" -> promoted = new Queen(isWhite);
+                            case "R" -> promoted = new Rook(isWhite);
+                            case "B" -> promoted = new Bishop(isWhite);
+                            case "N" -> promoted = new Knight(isWhite);
+                            default -> {
+                                System.out.println("Invalid promotion piece: " + promotion);
+                                return false;
+                            }
+                        }
+
+                        // Replace pawn with promoted piece
+                        board.getBoard()[toRow][toCol] = promoted;
+                        board.getBoard()[row][col] = null;
+
+                        System.out.println("After move: " + move + "=" + promotion.toUpperCase());
+                        board.printBoard(); // Optional
+                        return true;
+
+                    } else {
+                        // Regular move
+                        board.movePiece(row, col, toRow, toCol);
+                        System.out.println("After move: " + move);
+                        board.printBoard(); // Optional
+                        return true;
+                    }
+                }
+
             }
         }
 

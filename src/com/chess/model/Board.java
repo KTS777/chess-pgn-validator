@@ -43,7 +43,9 @@ public class Board {
 
 
     public void printBoard() {
+        System.out.println("  a b c d e f g h");
         for (int row = 0; row < 8; row++) {
+            System.out.print((8 - row) + " ");
             for (int col = 0; col < 8; col++) {
                 Piece piece = board[row][col];
                 if (piece != null) {
@@ -52,9 +54,12 @@ public class Board {
                     System.out.print(". ");
                 }
             }
-            System.out.println();
+            System.out.println((8 - row));
         }
+        System.out.println("  a b c d e f g h");
+        System.out.println();
     }
+
 
     public void placePiece(Piece piece, int row, int col) {
         board[row][col] = piece;
