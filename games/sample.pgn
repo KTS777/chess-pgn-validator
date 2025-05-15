@@ -1,8 +1,51 @@
-[Event "Broken Tags"]
+[Event "Friendly Match"]
 [Site "Internet"]
-[Date "2024.04.13"]
+[Date "2024.05.15"]
+[Round "1"]
+[White "Player1"]
+[Black "Player2"]
+[Result "1-0"]
+
+1. e4 e5 2. Nf3 Nc6 3. Bb5 a6
+4. Ba4 Nf6 5. O-O Be7 6. Re1 b5
+7. Bb3 d6 8. c3 O-O 9. h3 Nb8
+10. d4 Nbd7 11. Nbd2 Bb7 12. Bc2 Re8
+13. Nf1 Bf8 14. Ng3 g6 15. Bg5 h6
+16. Be3 Bg7 17. Qd2 Kh7 18. Rad1 exd4
+19. cxd4 Nxe4 20. Nxe4 Bxe4
+21. Bxe4 Rxe4 22. Qc2 Re8 23. Rc1 Rc8
+24. Qc6 Nb6 25. b3 Re7 26. Rc2 Qe8
+27. Rec1 Qxc6 28. Rxc6 Nd5
+29. Rxa6 Nxe3 30. fxe3 Rxe3
+31. Ra7 c5 32. Rxf7 Kg8 33. Rb7 Rce8
+34. dxc5 dxc5 35. Rxc5 Re1+ 36. Kh2 Bf8
+37. Rcc7 Bd6+ 38. g3 R8e2# 0-1
+
+[Event "Practice Game"]
+[Site "Home"]
+[Date "2024.05.14"]
+[Round "-"]
 [White "Alice"]
 [Black "Bob"]
 [Result "1-0"]
 
-1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 4. Ba4 Nf6 5. O-O
+1. d4 d5 2. c4 e6 3. Nc3 Nf6
+4. Bg5 Be7 5. e3 O-O 6. Nf3 h6
+7. Bh4 b6 8. cxd5 exd5 9. Bd3 Bb7
+10. O-O Nbd7 11. Rc1 c5 12. dxc5 bxc5
+13. Bf5 Nb6 14. Na4 c4 15. Nxb6 axb6
+16. a3 b5 17. Nd4 Qb6 18. Qf3 Rfd8
+19. Rfd1 Ra4 20. Bb1 g5 21. Bg3 Ne4
+22. Nf5 Bf8 23. Be5 Qe6 24. Bd4 Raa8
+25. Qh5 Bc6 26. Ng3 f5 27. f3 Nd6
+28. h4 Be8 29. Qh3 Bg6 30. hxg5 hxg5
+31. Qh8+ Kf7 32. Nh5 Bxh5 33. Qxh5+ Qg6
+34. Qxg6+ Kxg6 35. g4 Re8 36. gxf5+ Nxf5
+37. Kf2 Bd6 38. e4 dxe4 39. fxe4 Nxd4
+40. Rxd4 Bf4 41. Rcd1 Rh8 42. e5+ Kh5
+43. Be4 Raf8 44. Bf3+ Kg6 45. e6 Rh2+ 46. Bg2 Be3+
+47. Kxe3 Rxg2 48. Re4 Rg3+ 49. Ke2 Rg2+ 50. Ke3 Rg3+
+51. Kd4 Re8 52. e7 Kf7 53. Rf1+ Kg7 54. Kd5 Rd3+
+55. Ke6 Rc8 56. e8=Q Rxe8+ 57. Kf5 Rf8+ 58. Kg4 Rxf1
+59. Re7+ Kf6 60. Re4 Rg1+ 61. Kh5 Rh3+ 62. Rh4 Rxh4#
+1-0

@@ -56,9 +56,12 @@ public class PGNParser {
                 } else {
                     String[] tokens = line.split("\\s+");
                     for (String token : tokens) {
+                        if (token.equals("1-0") || token.equals("0-1") || token.equals("1/2-1/2") || token.equals("*")) {
+                            continue; // Game result, not a move
+                        }
                         if (token.matches("^[0-9]+\\.$")) {
                             continue; // move number (e.g. "1.")
-                        } else if (token.matches("^(O-O(-O)?|[a-h]?[NBRQK]?[a-h]?[1-8](=[NBRQ])?[+#]?)$")) {
+                        } else if (token.matches("^(O-O(-O)?|[NBKRQ]?[a-h]?[1-8]?x?[a-h][1-8](=[NBKRQ])?[+#]?)$")) {
                             currentGame.moves.add(token);
                         } else {
                             currentGame.syntaxErrors.add("Invalid move token: " + token);
