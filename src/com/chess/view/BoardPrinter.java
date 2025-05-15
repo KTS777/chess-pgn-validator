@@ -5,21 +5,25 @@ import com.chess.model.Piece;
 
 public class BoardPrinter {
 
-    public static void print(Board board) {
+    public static String getBoardAsString(Board board) {
         Piece[][] grid = board.getBoard();
-        System.out.println("  a b c d e f g h");
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("  a b c d e f g h\n");
         for (int row = 0; row < 8; row++) {
-            System.out.print((8 - row) + " ");
+            sb.append(8 - row).append(" ");
             for (int col = 0; col < 8; col++) {
                 Piece piece = grid[row][col];
                 if (piece != null) {
-                    System.out.print(piece.getSymbol() + " ");
+                    sb.append(piece.getSymbol()).append(" ");
                 } else {
-                    System.out.print(". ");
+                    sb.append(". ");
                 }
             }
-            System.out.println((8 - row));
+            sb.append(8 - row).append("\n");
         }
-        System.out.println("  a b c d e f g h\n");
+        sb.append("  a b c d e f g h\n\n");
+
+        return sb.toString();
     }
 }

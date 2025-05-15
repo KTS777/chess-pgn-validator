@@ -23,7 +23,8 @@ public class GameControllerTest {
                 "c3", "O-O"
         );
 
-        assertTrue(GameController.replayGame(game));
+        StringBuilder outputBuffer = new StringBuilder();
+        assertTrue(GameController.replayGame(game, outputBuffer));
     }
 
     @Test
@@ -42,7 +43,8 @@ public class GameControllerTest {
                 "Qxd7#", "a1=Q" // promotion as last move (invalid in this order)
         );
 
-        assertFalse(GameController.replayGame(game)); // a1=Q can't happen if game ended in checkmate
+        StringBuilder outputBuffer = new StringBuilder();
+        assertFalse(GameController.replayGame(game, outputBuffer)); // a1=Q can't happen if game ended in checkmate
     }
 
     @Test
@@ -50,7 +52,8 @@ public class GameControllerTest {
         PGNParser.ParsedGame game = new PGNParser.ParsedGame();
         game.moves = List.of("e4", "e5", "Nf3", "Nc6", "Qh5", "Qh5"); // illegal double move
 
-        assertFalse(GameController.replayGame(game));
+        StringBuilder outputBuffer = new StringBuilder();
+        assertFalse(GameController.replayGame(game, outputBuffer));
     }
 
     @Test
@@ -62,7 +65,8 @@ public class GameControllerTest {
                 "dxc6" // en passant-like
         );
 
-        assertTrue(GameController.replayGame(game));
+        StringBuilder outputBuffer = new StringBuilder();
+        assertTrue(GameController.replayGame(game, outputBuffer));
     }
 
     @Test
@@ -75,6 +79,7 @@ public class GameControllerTest {
                 "O-O", "O-O"
         );
 
-        assertTrue(GameController.replayGame(game));
+        StringBuilder outputBuffer = new StringBuilder();
+        assertTrue(GameController.replayGame(game, outputBuffer));
     }
 }

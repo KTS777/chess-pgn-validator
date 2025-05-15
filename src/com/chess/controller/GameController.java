@@ -7,21 +7,22 @@ import com.chess.view.BoardPrinter;
 
 public class GameController {
 
-    public static boolean replayGame(PGNParser.ParsedGame game) {
+    public static boolean replayGame(PGNParser.ParsedGame game, StringBuilder outputBuffer) {
         Board board = new Board();
         boolean isWhiteTurn = true;
 
         for (String move : game.moves) {
-            if (!applyMove(board, move, isWhiteTurn)) {
-                System.out.println("Illegal move detected: " + move);
+            if (!applyMove(board, move, isWhiteTurn, outputBuffer)) {
+                outputBuffer.append("Illegal move detected: ").append(move).append("\n");
                 return false;
             }
             isWhiteTurn = !isWhiteTurn;
         }
 
-        System.out.println("Game is valid.");
+        outputBuffer.append("Game is valid.\n");
         return true;
     }
+
 
     public static int[] squareToCoords(String square) {
         if (square.length() != 2) return null;
@@ -29,8 +30,8 @@ public class GameController {
         char file = square.charAt(0); // a–h
         char rank = square.charAt(1); // 1–8
 
-        int col = file - 'a';             // 'a' = 0, ..., 'h' = 7
-        int row = 8 - Character.getNumericValue(rank); // '1' = row 7, ..., '8' = row 0
+        int col = file - 'a';
+        int row = 8 - Character.getNumericValue(rank);
 
         if (col < 0 || col > 7 || row < 0 || row > 7) return null;
 
@@ -39,7 +40,7 @@ public class GameController {
 
     private static int[] lastDoubleStepPawn = null;
 
-    private static boolean applyMove(Board board, String move, boolean isWhiteTurn) {
+    private static boolean applyMove(Board board, String move, boolean isWhiteTurn, StringBuilder outputBuffer) {
         MoveInterpreter.ParsedMove parsed = MoveInterpreter.parse(move);
         if (parsed == null) return false;
 
@@ -51,8 +52,8 @@ public class GameController {
                 board.movePiece(0, 4, 0, 6); // e8 → g8
                 board.movePiece(0, 7, 0, 5); // h8 → f8
             }
-            System.out.println("Castling: O-O");
-            BoardPrinter.print(board);
+            outputBuffer.append("Castling: O-O\n");
+            outputBuffer.append(BoardPrinter.getBoardAsString(board));
             lastDoubleStepPawn = null;
             return true;
         }
@@ -65,12 +66,11 @@ public class GameController {
                 board.movePiece(0, 4, 0, 2); // e8 → c8
                 board.movePiece(0, 0, 0, 3); // a8 → d8
             }
-            System.out.println("Castling: O-O-O");
-            BoardPrinter.print(board);
+            outputBuffer.append("Castling: O-O-O\n");
+            outputBuffer.append(BoardPrinter.getBoardAsString(board));
             lastDoubleStepPawn = null;
             return true;
         }
-
 
         int[] target = squareToCoords(parsed.targetSquare);
         if (target == null) return false;
@@ -84,9 +84,7 @@ public class GameController {
                 Piece p = boardState[row][col];
                 if (p == null || p.isWhite() != isWhiteTurn) continue;
 
-
                 boolean matchType = parsed.pieceCode.equalsIgnoreCase(p.getSymbol());
-
                 if (!matchType) continue;
 
                 // Disambiguation
@@ -112,14 +110,13 @@ public class GameController {
                         case "B" -> promoted = new Bishop(isWhiteTurn);
                         case "N" -> promoted = new Knight(isWhiteTurn);
                         default -> {
-                            System.out.println("Invalid promotion: " + parsed.promotion);
+                            outputBuffer.append("Invalid promotion: ").append(parsed.promotion).append("\n");
                             return false;
                         }
                     }
                     board.placePiece(promoted, toRow, toCol);
                     board.placePiece(null, row, col);
                 }
-
                 // Handle en passant capture
                 else if (p instanceof Pawn &&
                         Math.abs(col - toCol) == 1 &&
@@ -140,15 +137,16 @@ public class GameController {
                     lastDoubleStepPawn = null;
                 }
 
-                System.out.println("After move: " + move);
-                BoardPrinter.print(board);
+                outputBuffer.append("After move: ").append(move).append("\n");
+                outputBuffer.append(BoardPrinter.getBoardAsString(board));
                 return true;
             }
         }
 
-        System.out.println("No valid " + parsed.pieceCode + " found to perform move: " + move);
+        outputBuffer.append("No valid ").append(parsed.pieceCode).append(" found to perform move: ").append(move).append("\n");
         return false;
     }
+
 
 
 

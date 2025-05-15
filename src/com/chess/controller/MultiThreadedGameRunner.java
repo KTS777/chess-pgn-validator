@@ -13,7 +13,14 @@ public class MultiThreadedGameRunner {
         List<Future<Boolean>> results = new ArrayList<>();
 
         for (PGNParser.ParsedGame game : games) {
-            results.add(executor.submit(() -> GameController.replayGame(game)));
+            results.add(executor.submit(() -> {
+                StringBuilder outputBuffer = new StringBuilder();
+                boolean isValid = GameController.replayGame(game, outputBuffer);
+                synchronized (System.out) {
+                    System.out.println(outputBuffer.toString());
+                }
+                return isValid;
+            }));
         }
 
         executor.shutdown();
